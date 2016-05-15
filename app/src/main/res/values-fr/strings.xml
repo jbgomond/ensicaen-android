@@ -2,6 +2,9 @@
 <resources>
     <string name="app_name">ENSICAEN</string>
 
+    <!-- Strings related to the menu -->
+    <string name="menu_results">Notes</string>
+
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Mot de passe</string>
