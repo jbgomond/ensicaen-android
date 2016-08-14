@@ -334,7 +334,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
-                Intent intent = new Intent(LoginActivity.this, TrainingsActivity.class);
+                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                 /*intent.putExtra("ENT_USERNAME", this.username);
                 intent.putExtra("ENT_PASSWORD", this.password);*/
                 startActivity(intent);

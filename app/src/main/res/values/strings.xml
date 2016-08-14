@@ -2,7 +2,10 @@
     <string name="app_name">ENSICAEN</string>
 
     <!-- Strings related to the menu -->
-    <string name="menu_results">Results</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_news">News</string>
+    <string name="menu_results">Notes</string>
+    <string name="menu_mails">Mails</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -16,4 +19,9 @@
         completions."
     </string>
     <string name="prompt_username">Username</string>
+
+    <!-- Strings related to home -->
+    <string name="news_btn">News</string>
+    <string name="marks_btn">Marks</string>
+    <string name="mails_btn">Mails</string>
 </resources>
