@@ -15,6 +15,6 @@ public class MarksYearsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String username = intent.getStringExtra("ENT_USERNAME");
         String password = intent.getStringExtra("ENT_PASSWORD");
-        new EntConnectorTask().execute(username, password);
+        new EntConnectorTask().execute("", "");
     }
 }

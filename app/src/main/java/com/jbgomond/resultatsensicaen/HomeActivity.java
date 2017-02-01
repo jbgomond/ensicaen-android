@@ -19,7 +19,7 @@ public class HomeActivity extends AppCompatActivity {
             case R.id.news_btn:
                 break;
             case R.id.marks_btn:
-                intent = new Intent(this, TrainingsActivity.class);
+                intent = new Intent(this, MarksYearsActivity.class);
                 startActivity(intent);
                 break;
             case R.id.mails_btn:

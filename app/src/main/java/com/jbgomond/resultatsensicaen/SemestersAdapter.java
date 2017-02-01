@@ -12,10 +12,10 @@ import com.jbgomond.resultatsensicaen.model.Training;
 
 import java.util.ArrayList;
 
-public class TrainingsAdapter extends RecyclerView.Adapter<TrainingsAdapter.ViewHolder> {
-    private ArrayList<Training> trainings;
+public class SemestersAdapter extends RecyclerView.Adapter<SemestersAdapter.ViewHolder> {
+    public ArrayList<Training> trainings;
 
-    public TrainingsAdapter(ArrayList<Training> trainings) {
+    public SemestersAdapter(ArrayList<Training> trainings) {
         this.trainings = trainings;
     }
 
@@ -27,9 +27,7 @@ public class TrainingsAdapter extends RecyclerView.Adapter<TrainingsAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.trainingId = trainings.get(position).getId();
         holder.trainingName.setText(trainings.get(position).getName());
-        holder.trainings = trainings;
     }
 
     @Override
@@ -49,9 +47,7 @@ public class TrainingsAdapter extends RecyclerView.Adapter<TrainingsAdapter.View
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private ArrayList<Training> trainings;
-        private int trainingId;
-        private TextView trainingName;
+        public TextView trainingName;
         private Context context;
 
         public ViewHolder(View itemView) {
@@ -64,7 +60,7 @@ public class TrainingsAdapter extends RecyclerView.Adapter<TrainingsAdapter.View
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(context, SemestersActivity.class);
-            intent.putExtra("SEMESTERS", trainings.get(trainingId).getSemesters());
+            intent.putExtra("SEMESTER_ID", getLayoutPosition());
             context.startActivity(intent);
         }
     }

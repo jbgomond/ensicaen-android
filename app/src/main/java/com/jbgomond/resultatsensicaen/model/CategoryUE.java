@@ -1,8 +1,11 @@
-package com.jbgomond.resultatsensicaen;
+package com.jbgomond.resultatsensicaen.model;
+
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.util.ArrayList;
 
-public class CategoryUE {
+public class CategoryUE implements Parcelable {
 
     private String name;
     private ArrayList<ResultsUE> resultsUE;
@@ -34,5 +37,16 @@ public class CategoryUE {
                 "name='" + name + '\'' +
                 ", resultsUE=" + resultsUE +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeTypedList(resultsUE);
     }
 }

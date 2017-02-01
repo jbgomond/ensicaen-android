@@ -1,5 +1,6 @@
 package com.jbgomond.resultatsensicaen;
 
+import android.net.UrlQuerySanitizer;
 import android.os.AsyncTask;
 
 import org.jsoup.Connection;
@@ -14,7 +15,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,112 +29,82 @@ public class EntConnectorTask extends AsyncTask<String, String, String> {
 
     @Override
     protected String doInBackground(String... params) {
+        Connection.Response res1;
+        Connection.Response res2;
+        Connection.Response res3;
+        Connection.Response res4;
+        Map<String, String> cookies;
+
         try {
-            String url = "https://cas.ensicaen.fr/cas/login?service=https://shibboleth.ensicaen.fr/idp/Authn/RemoteUser";
-            String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.94 Safari/537.36";
-
-            // Get lt from the form
-            Connection.Response initialResponse = Jsoup.connect(url).userAgent(userAgent).method(Connection.Method.GET).execute();
-            Document doc = initialResponse.parse();
-            Element ltInput = doc.select("input[name=lt]").first();
-            String ltVal = ltInput.attr("value");
-
-            // Get execution from the form
-            Element executionInput = doc.select("input[name=execution]").first();
-            String executionVal = executionInput.attr("value");
-
-            // Get cookies
-            Map<String, String> cookies = initialResponse.cookies();
-
-            Connection.Response res = Jsoup.connect(url)
-                    .followRedirects(true)
-                    .cookies(initialResponse.cookies())
-                    .data("username", params[0])
-                    .data("password", params[1])
-                    .data("execution", executionVal)
-                    .data("_eventId", "submit")
-                    .data("lt", ltVal)
-                    .data("submit", "SE CONNECTER")
-                    .userAgent(userAgent)
-                    .header("Content-Type","application/x-www-form-urlencoded;charset=UTF-8")
+            // AUTH 1
+            res1 = Jsoup.connect("http://ent.normandie-univ.fr")
                     .method(Connection.Method.POST)
+                    .header("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
                     .execute();
 
-            System.out.println(res.url());
-            System.out.println(res.cookies());
-            System.out.println(res.parse().toString());
+            cookies = res1.cookies();
 
-            cookies.putAll(res.cookies());
+            // get action
+            Document doc = res1.parse();
+            Element loginForm = doc.select("form").first();
+            String actionUrl = URLDecoder.decode(loginForm.attr("action"), "UTF-8");
 
-            /*doc = null;
-            try {
-                doc = Jsoup.connect("https://ent.normandie-univ.fr/uPortal/f/u17l1s9/normal/render.uP")
-                        .cookies(cookies)
-                        .get();
-                System.out.println(doc);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
+            // Récupération de l'identifiant de cookie
+            UrlQuerySanitizer sanitizer = new UrlQuerySanitizer(actionUrl);
+            String cookieId = sanitizer.getValue("target"); // get your value
 
+            // AUTH 2
+            res2 = Jsoup.connect("http://wayf.normandie-univ.fr/WAYF.php?entityID=" + URLEncoder.encode("https://ent.normandie-univ.fr", "UTF-8") + "&return=" + URLEncoder.encode("https://ent.normandie-univ.fr/Shibboleth.sso/WAYF?SAMLDS=1&target=" + cookieId, "UTF-8"))
+                    .method(Connection.Method.POST)
+                    .header("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
+                    .data("user_idp", "https://shibboleth.ensicaen.fr/idp/shibboleth")
+                    .cookies(cookies)
+                    .execute();
 
+            cookies.putAll(res2.cookies());
 
-            /*URL url = new URL(url);
-            HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+            // get lt
+            Document doc2 = res2.parse();
+            Element lt = doc2.select("input[name=lt]").first();
+            String ltVal = lt.attr("value");
 
-            //Get Response
-            InputStream is = urlConnection.getInputStream();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-            String line;
-            StringBuffer response = new StringBuffer();
-            while((line = rd.readLine()) != null) {
+            String jsessionId = cookies.get("JSESSIONID");
 
-                System.out.println(line);
-                response.append(line);
-                response.append('\r');
-            }
-            rd.close();
+            System.out.println("RES 2 : " + res2);
+            System.out.println("jsessionId : " + jsessionId);
 
-            // Get token CAS*/
+            res3 = Jsoup.connect("https://cas.ensicaen.fr/cas/login;jsessionid=" + jsessionId + "?service=https://shibboleth.ensicaen.fr/idp/Authn/RemoteUser")
+                    .method(Connection.Method.POST)
+                    .header("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
+                    .cookies(cookies)
+                    .data("username", "")
+                    .data("password", "")
+                    .data("lt", ltVal)
+                    .data("execution", "e1s1")
+                    .data("_eventId", "submit")
+                    .execute();
 
+            cookies.putAll(res3.cookies());
 
-            // POST
-            /*String postParameters = "username=" + URLEncoder.encode(params[0], "UTF-8") +
-                    "&password=" + URLEncoder.encode(params[1], "UTF-8") +
-                    "&execution=e1s1" +
-                    "&_eventId=submit" +
-                    "&lt=" + lt +
-                    "&submit=" + URLEncoder.encode("SE CONNECTER", "UTF-8");
-            urlConnection.setRequestMethod("POST");
-            urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            urlConnection.setRequestProperty("Content-Length", "" + Integer.toString(postParameters.getBytes().length));
-            urlConnection.setRequestProperty("Content-Language", "fr-FR");
+            // get lt
+            Document doc3 = res3.parse();
+            Element SAMLResponse = doc3.select("input[name=SAMLResponse]").first();
+            String SAMLResponseVal = SAMLResponse.attr("value");
 
-            urlConnection.setUseCaches(false);
-            urlConnection.setDoInput(true);
-            urlConnection.setDoOutput(true);
+            res4 = Jsoup.connect("https://ent.normandie-univ.fr/Shibboleth.sso/SAML2/POST")
+                    .method(Connection.Method.POST)
+                    .header("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
+                    .cookies(cookies)
+                    .data("RelayState", cookieId)
+                    .data("SAMLResponse", SAMLResponseVal)
+                    .execute();
 
-            //Send request
-            DataOutputStream outputStream = new DataOutputStream(urlConnection.getOutputStream());
-            outputStream.writeBytes(postParameters);
-            outputStream.flush();
-            outputStream.close();
+            cookies.putAll(res4.cookies());
 
-            //Get Response
-            InputStream is = urlConnection.getInputStream();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-            String line;
-            StringBuffer response = new StringBuffer();
-            while((line = rd.readLine()) != null) {
+            System.out.println("RES 4 : " + res4.parse());
 
-                System.out.println(line);
-                response.append(line);
-                response.append('\r');
-            }
-            rd.close();*/
-
-            return "";//response.toString();
-        } catch(IOException e) {
-            System.out.println("IO Error");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return null;

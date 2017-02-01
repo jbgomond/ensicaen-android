@@ -26,7 +26,7 @@ public class MailsTask extends AsyncTask<String, String, Message[]> {
         try {
             Session session = Session.getInstance(props, null);
             Store store = session.getStore();
-            store.connect("zimbra.ensicaen.fr", "XXX", "XXX");
+            store.connect("zimbra.ensicaen.fr", "", "");
             Folder inbox = store.getFolder("INBOX");
             inbox.open(Folder.READ_ONLY);
             System.out.println("VOUS AVEZ " + inbox.getMessageCount() + " MESSAGES");

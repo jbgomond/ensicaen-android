@@ -2,6 +2,12 @@ package com.jbgomond.resultatsensicaen;
 
 import android.os.AsyncTask;
 
+import com.jbgomond.resultatsensicaen.model.CategoryUE;
+import com.jbgomond.resultatsensicaen.model.ResultsSubject;
+import com.jbgomond.resultatsensicaen.model.ResultsUE;
+import com.jbgomond.resultatsensicaen.model.Semester;
+import com.jbgomond.resultatsensicaen.model.Training;
+
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -14,11 +20,8 @@ import java.util.ArrayList;
 public class EducationalBookletConnectorTask extends AsyncTask<String, String, Document> {
 
     private ArrayList<ResultsUE> ueResults = new ArrayList<>();
-    private ResultsActivity activity;
 
-    public EducationalBookletConnectorTask(ResultsActivity activity) {
-        this.activity = activity;
-    }
+    public EducationalBookletConnectorTask() {}
 
     @Override
     protected Document doInBackground(String... params) {
@@ -87,7 +90,7 @@ public class EducationalBookletConnectorTask extends AsyncTask<String, String, D
             }
         }
 
-        //semester.addAll(notifications);
-        this.activity.resultsAdapter.notifyDataSetChanged();
+        /*adapter = new SemestersAdapter(SemestersActivity.class, training);
+        mRecyclerView.setAdapter(adapter);*/
     }
 }

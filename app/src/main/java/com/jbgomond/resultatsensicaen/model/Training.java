@@ -1,23 +1,36 @@
-package com.jbgomond.resultatsensicaen;
+package com.jbgomond.resultatsensicaen.model;
+
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.util.ArrayList;
 
-public class Training {
+public class Training implements Parcelable {
 
+    private int id;
     private String name;
     private String manager;
     private ArrayList<Semester> semesters;
 
     public Training() {}
 
-    public Training(String name) {
+    public Training(int id, String name) {
+        this.id = id;
         this.name = name;
     }
 
-    public Training(String name, String manager, ArrayList<Semester> semesters) {
-        this.name = name;
+    public Training(int id, String name, String manager, ArrayList<Semester> semesters) {
+        this(id, name);
         this.manager = manager;
         this.semesters = semesters;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -46,10 +59,24 @@ public class Training {
 
     @Override
     public String toString() {
-        return "Year{" +
-                "name='" + name + '\'' +
+        return "Training{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", manager='" + manager + '\'' +
                 ", semesters=" + semesters +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(name);
+        dest.writeString(manager);
+        dest.writeTypedList(semesters);
     }
 }

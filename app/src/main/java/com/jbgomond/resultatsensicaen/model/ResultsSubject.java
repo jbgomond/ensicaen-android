@@ -1,6 +1,9 @@
-package com.jbgomond.resultatsensicaen;
+package com.jbgomond.resultatsensicaen.model;
 
-public class ResultsSubject {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class ResultsSubject implements Parcelable {
     private String name;
     private String code;
     private Float nbHoursCours;
@@ -142,5 +145,25 @@ public class ResultsSubject {
      */
     private Float convertEntValuesToFloat(String value) {
         return (value.equals("-") ? 0 : Float.parseFloat(value));
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(code);
+        dest.writeFloat(nbHoursCours);
+        dest.writeFloat(nbHoursTD);
+        dest.writeFloat(nbHoursTP);
+        dest.writeFloat(coefficientPartiel);
+        dest.writeFloat(coefficientCours);
+        dest.writeFloat(coefficientTP);
+        dest.writeFloat(markPartiel);
+        dest.writeFloat(markCours);
+        dest.writeFloat(markTP);
     }
 }

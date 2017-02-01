@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.jbgomond.resultatsensicaen.model.Training;
+
 import java.util.ArrayList;
 
 public class TrainingsActivity extends AppCompatActivity {
@@ -30,11 +32,11 @@ public class TrainingsActivity extends AppCompatActivity {
     }
 
     private void initTrainingsList() {
-        trainings.add(new Training("Electronique et Physique appliquée"));
-        trainings.add(new Training("Génie Industriel"));
-        trainings.add(new Training("Informatique"));
-        trainings.add(new Training("Informatique - Apprentissage"));
-        trainings.add(new Training("Matériaux et Mécanique"));
-        trainings.add(new Training("Matériaux et Chimie"));
+        trainings.add(new Training(1, "Electronique et Physique appliquée"));
+        trainings.add(new Training(2, "Génie Industriel"));
+        trainings.add(new Training(3, "Informatique"));
+        trainings.add(new Training(4, "Informatique - Apprentissage"));
+        trainings.add(new Training(5, "Matériaux et Mécanique"));
+        trainings.add(new Training(6, "Matériaux et Chimie"));
     }
 }
